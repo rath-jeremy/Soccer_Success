@@ -4,6 +4,7 @@ import lxml.html
 import requests
 import numpy
 import os
+import io
 
 # Reform Player Names
 def reformat_name(player_name):
@@ -11,12 +12,12 @@ def reformat_name(player_name):
         # Remove Apostrophes
         temp_name = player_name.replace("'", " ")
         # Remove Unicode
-        if isinstance(player_name, unicode):
-            temp_name = unidecode.unidecode(player_name)
+        if isinstance(temp_name, unicode):
+            temp_name = unidecode.unidecode(temp_name)
         # Remove Dashes
         temp_name = temp_name.replace("-", " ")
         # Remove Periods
-        temp_name = player_name.replace(".", " ")
+        temp_name = temp_name.replace(".", " ")
         # Remove Capitals
         temp_name = temp_name.lower()
         # Remove Spaces from Either End
@@ -34,25 +35,101 @@ def reformat_name(player_name):
     return temp_name
 
 # Reform Dates
-def reformat_date(date):
+def reformat_date(date, *variables, **keywords):
     # Order of Months for the Soccer Season
-    year = ['august', 'september', 'october',
-            'november', 'december',
-            'january', 'february', 'march',
-            'april', 'may', 'june', 'july']
+    year = ['january', 'february', 'march',
+            'april', 'may', 'june', 'july',
+            'august', 'september', 'october',
+            'november', 'december']
+    if 'address' not in keywords or 'sofifa' in keywords['address']:
+        year = ['august', 'september', 'october',
+                'november', 'december',
+                'january', 'february', 'march',
+                'april', 'may', 'june', 'july']
     # Convert a Single Date
     if type(date) != list:
+        # Sofifa Scheme
+        if date[0] == 'f':
+            index = date.find('-')
+            upper = int(date[index + 1:]) - 75
+            tdate = 0; i = 2
+            while tdate < upper:
+                tdate += 365; i += 1
+                if i % 4 == 0:
+                    tdate += 1
+            tdate = upper - tdate
+            tdate = 365 + tdate
+            if i % 4 == 0:
+                tdate += 1
+            month = 31; done = False
+            if tdate <= month and not done: # January
+                tdate = '0' + str(131 + tdate - month)
+                done = True
+            month += 28
+            if i % 4 == 0:
+                month += 1
+            if tdate <= month and not done: # February
+                tdate = '0' + str(228 + tdate - month)
+                done = True
+            month += 31
+            if tdate <= month and not done: # March
+                tdate = '0' + str(331 + tdate - month)
+                done = True
+            month += 30
+            if tdate <= month and not done: # April
+                tdate = '0' + str(430 + tdate - month)
+                done = True
+            month += 31
+            if tdate <= month and not done: # May
+                tdate = '0' + str(531 + tdate - month)
+                done = True
+            month += 30
+            if tdate <= month and not done: # June
+                tdate = '0' + str(630 + tdate - month)
+                done = True
+            month += 31
+            if tdate <= month and not done: # July
+                tdate = '0' + str(731 + tdate - month)
+                done = True
+            month += 31
+            if tdate <= month and not done: # August
+                tdate = '0' + str(831 + tdate - month)
+                done = True
+            month += 30
+            if tdate <= month and not done: # September
+                tdate = '0' + str(930 + tdate - month)
+                done = True
+            month += 31
+            if tdate <= month and not done: # October
+                tdate = str(1031 + tdate - month)
+                done = True
+            month += 30
+            if tdate <= month and not done: # November
+                tdate = str(1130 + tdate - month)
+                done = True
+            month += 31
+            if tdate <= month and not done: # December
+                tdate = str(1231 + tdate - month)
+                done = True
+            tdate = int(str(i - 420) + tdate)
         # YYYY-MM-DD Scheme
-        if date.find('-') != -1:
+        elif date.find('-') != -1:
             day   = date[date.rfind('-') + 1:]
             month = date[date.find('-') + 1:date.rfind('-')]
-            month = int(month) - 8
-            if month < 0:
-                month += 12
+            year  = date[:date.find('-')]
+            if 'address' in keywords and 'futwiz' in keywords['address']:
+                month = int(month) - 8
+                if month < 0:
+                    month += 12
             month = str(month)
             if len(day) == 1:
                 day = '0' + day
-            tdate = int(month + day)
+            if 'address' not in keywords or 'sofifa' in keywords['address']:
+                if len(month) == 1:
+                    month = '0' + month
+                tdate = int(year[2:] + month + day)
+            else:
+                tdate = int(month + day)
         # Month Day or Day Month Scheme
         else:
             # Remove Capitals
@@ -77,11 +154,14 @@ def reformat_date(date):
             month = tdate[tdate.find(' ') + 1:]
             # Convert Month to Number
             month = str(year.index(month))
+            if len(month) == 1:
+                month = '0' + month
             # Return Date (mdd)
-            tdate = int(month + day)
+            tdate = int(keywords['year'] + month + day)
+            
     # Convert a List of Dates
     else:
-        tdate = numpy.zeros(len(date))
+        tdate = ['temp'] * len(date)
         for i in range(len(tdate)):
             tdate[i] = reformat_date(date[i])
     return tdate
@@ -125,16 +205,46 @@ def reformat_score(score):
     if home > away:
         return 2
 
+# Split Name
+def split_name(name):
+    names = list()
+    while name.find(' ') != -1:
+        index = name.find(' ')
+        names.append(name[:index])
+        name = name[index + 1:]
+    names.append(name)
+    return names
+
+# Cleans out Non-Dates
+def clean(dates):
+    indices = list()
+    for i in range(len(dates) - 1, -1, -1):
+        date = dates[i]
+        try:
+            int(date[-6:])
+        except:
+            indices.append(i)
+            dates.pop(i)
+    return dates, indices
+        
 # Sort Out Dates
 def available_dates(address):
-    player_page = requests.get(address)
-    player_tree = lxml.html.fromstring(player_page.content)
-    return player_tree.xpath('//ul[@class="innernav"]/li[@class="dropdown"]/ul[@class="dropdown-menu"]/li/a[@href]/text()')
+    if 'sofifa' in address:
+        player_page = requests.get(address)
+        player_tree = lxml.html.fromstring(player_page.content)
+        player_date = player_tree.xpath('//div/a[@href]/@class')
+        return clean(player_date)[0]
+    elif 'futwiz' in address:
+        player_page = requests.get(address)
+        player_tree = lxml.html.fromstring(player_page.content)
+        return player_tree.xpath('//ul[@class="innernav"]/li[@class="dropdown"]/ul[@class="dropdown-menu"]/li/a[@href]/text()')
+    else:
+        quit()
 
 # Find Closest Date [Only Backward]
-def closest_date(date, dates):
-    r_date  = reformat_date(date)
-    r_dates = reformat_date(dates)
+def closest_date(date, dates, *variables, **keywords):
+    r_date  = reformat_date(date, *variables, **keywords)
+    r_dates = reformat_date(dates, *variables, **keywords)
     for i in range(len(r_dates)):
         if r_date >= r_dates[i]:
             return dates[i]
@@ -144,20 +254,38 @@ def closest_date(date, dates):
 def alternate_address(address, date, *variables, **keywords):
     player_page = requests.get(address)
     player_tree = lxml.html.fromstring(player_page.content)
-    player_page = requests.get(address)
-    dates       = player_tree.xpath('//ul[@class="innernav"]/li[@class="dropdown"]' +
-                                    '/ul[@class="dropdown-menu"]/li/a[@href]/text()')
-    if len(dates) == 0:
-        print address + " had no available dates."
-        return address
+    if 'sofifa' in address:
+        temp    = clean(player_tree.xpath('//div/a[@href]/@class'))
+        dates   = temp[0]
+        indices = temp[1]
+        if len(dates) == 0:
+            print address + " had no available dates."
+            return address
+        else:
+            new_date   = closest_date(date, dates, address = address)
+            index      = dates.index(new_date)
+            if 'adjustment' in keywords:
+                index -= keywords['adjustment']
+            addresses  = player_tree.xpath('//div/a[@class]/@href')
+            for i in indices:
+                addresses.pop(i)
+            return ' http://www.sofifa.com' + addresses[index]
+    elif 'futwiz' in address:
+        dates = player_tree.xpath('//ul[@class="innernav"]/li[@class="dropdown"]' +
+                                  '/ul[@class="dropdown-menu"]/li/a[@href]/text()')
+        if len(dates) == 0:
+            print address + " had no available dates."
+            return address
+        else:
+            new_date   = closest_date(date, dates, address = address)
+            index      = dates.index(new_date, address = address)
+            if 'adjustment' in keywords:
+                index -= keywords['adjustment']
+            addresses  = player_tree.xpath('//ul[@class="innernav"]/li[@class="dropdown"]' +
+                                            '/ul[@class="dropdown-menu"]/li/a/@href')
+            return ' http://www.futwiz.com' + addresses[index]
     else:
-        new_date    = closest_date(date, dates)
-        index       = dates.index(new_date)
-        if 'adjustment' in keywords:
-            index -= keywords['adjustment']
-        addresses   = player_tree.xpath('//ul[@class="innernav"]/li[@class="dropdown"]' +
-                                        '/ul[@class="dropdown-menu"]/li/a/@href')
-        return ' http://www.futwiz.com' + addresses[index]
+        quit()
 
 # Search for Player Address
 def search_player(database, player_name, *variables, **keywords):
@@ -165,49 +293,85 @@ def search_player(database, player_name, *variables, **keywords):
     player_name = reformat_name(player_name)
     open_file = open(database)
     
-    # Find First Instant of Player
+    # Find First Instance of Player
     if 'skip' not in keywords or not keywords['skip']:
         for line in open_file:
             if line.split('\t')[0] == player_name:
                 # Grab Address and Remove Line Break
                 address = line.split('\t')[1]
                 address = address[:-1]
-                open_file.close(); return address
+                open_file.close(); return address    
+        # Check Alternate Databases
+        if 'databases' in keywords:
+            for current_database in keywords['databases']:
+                open_file.close()
+                open_file = open(current_database)
+                for line in open_file:
+                    if line.split('\t')[0] == player_name:
+                        # Grab Address and Remove Line Break
+                        address = line.split('\t')[1]
+                        address = address[:-1]
+                        open_file.close(); return address
     
-    # View Cached Manual Matches
-    open_file.close()
-    unmatched_players = database[:database.rfind('.')] + '.key'
-    if os.path.isfile(unmatched_players):
-        open_file = open(unmatched_players, 'r')
+    # Find First Instance with all Names
+    for current_database in [database] + keywords['databases']:
+        open_file.close()
+        open_file = open(current_database)
         for line in open_file:
-            if line.split('\t')[0] == player_name:
+            names = split_name(player_name)
+            flip  = True
+            for name in names:
+                if name not in line.split('\t')[0]:
+                    flip = False
+            if flip:
                 # Grab Address and Remove Line Break
                 address = line.split('\t')[1]
                 address = address[:-1]
                 open_file.close(); return address
     
-    # Manually Match Player
-    if 'done' not in keywords or not keywords['done']:
-        print "Cannot find " + player_name + ". Type 'quit' to abort matching."
-    while True:
+    # Skip if Merging Databases
+    if 'automatic' in keywords and keywords['automatic']:
+        return "FAIL"
+    else:
+        # View Cached Manual Matches
         open_file.close()
-        if not os.path.isfile(unmatched_players):
-            open_file = open(unmatched_players, 'w')
+        if 'sofifa' in database:
+            unmatched_players = 'sofifa_database.key'
+        elif 'futwiz' in database:
+            unmatched_players = 'futwiz.key'
         else:
-            open_file = open(unmatched_players, 'a')
-        new_name = raw_input("   Alternate Identifier:")
-        if new_name == 'quit':
-            break
-        address = search_player(database, new_name, done = True)
-        open_file.write(player_name + '\t' + address + '\n')
-        return address
-    
-    # Terminate Script
-    print "Error, " + player_name + " not found."
-    quit()
+            quit()
+        if os.path.isfile(unmatched_players):
+            open_file = open(unmatched_players, 'r')
+            for line in open_file:
+                if line.split('\t')[0] == player_name:
+                    # Grab Address and Remove Line Break
+                    address = line.split('\t')[1]
+                    address = address[:-1]
+                    open_file.close(); return address
+        
+        # Manually Match Player
+        if 'done' not in keywords or not keywords['done']:
+            print "Cannot find " + player_name + ". Type 'quit' to abort matching."
+        while True:
+            open_file.close()
+            if not os.path.isfile(unmatched_players):
+                open_file = open(unmatched_players, 'w')
+            else:
+                open_file = open(unmatched_players, 'a')
+            new_name = raw_input("   Alternate Identifier:")
+            if new_name == 'quit':
+                break
+            address = search_player(database, new_name, done = True, *variables, **keywords)
+            open_file.write(player_name + '\t' + address + '\n')
+            return address
+        
+        # Terminate Script
+        print "Error, " + player_name + " not found."
+        quit()
 
 # Gets Player Addresses from List of Names
-def bulk_search_player(database, player_names):
+def bulk_search_player(database, player_names, *variables, **keywords):
     # Initialize
     player_names = reformat_name(player_names)
     open_file = open(database)
@@ -222,47 +386,94 @@ def bulk_search_player(database, player_names):
             addresses[player_names.index(line.split('\t')[0])] = address
         if 'temp' not in addresses:
             return addresses
-        
+            
     # Terminate Script
     for i in range(len(addresses)):
         if addresses[i] == 'temp':
-            address = search_player(database, player_names[i], skip = True)
+            address = search_player(database, player_names[i], *variables, **keywords)
             addresses[i] = address
     return addresses
 
-# Get Player Stats from Address
-def player_stats(address, *variables, **keywords):
-    newaddress = address
-    if 'date' in keywords:
-        newaddress = alternate_address(address, keywords["date"])
-    player_page = requests.get(newaddress)
-    try:
+# Inter-mediator for player_stats Function
+def player_page(address, *variables, **keywords):
+    player_page = requests.get(address)
+    if 'sofifa' in address:
         player_tree = lxml.html.fromstring(player_page.content)
-        player_stat = player_tree.xpath('//li/span[@class]/text()')
-        position    = player_tree.xpath('//div[@class="career-page-player-position"]/text()')
-    except:
-        player_stat = ['0', '0', '0', '0']
-    # Catch Empty Database
-    k = 1
-    while player_stat == ['0', '0', '0', '0']:
-        k += 1
-        newaddress = alternate_address(address, keywords["date"], adjustment = k)
-        player_page = requests.get(newaddress)
-        # Catch Crappy Web Design Flaw
+        player_stat = player_tree.xpath('//div[@class="card-body"]/ul/li/span[@class]/text()')
+        position    = player_tree.xpath('//div[@class="meta"]/span/span/text()')
+    elif 'futwiz' in address:
         try:
             player_tree = lxml.html.fromstring(player_page.content)
             player_stat = player_tree.xpath('//li/span[@class]/text()')
             position    = player_tree.xpath('//div[@class="career-page-player-position"]/text()')
         except:
             player_stat = ['0', '0', '0', '0']
+    else:
+        print "Database type not understood."
+        quit()
+    return player_stat, position
+    
+# Get Player Stats from Address
+def player_stats(address, *variables, **keywords):
+    # Correct Address
+    newaddress = address
+    if 'date' in keywords:
+        newaddress = alternate_address(address, keywords["date"])
+    
+    # Get Data
+    player_stat, position = player_page(newaddress, *variables, **keywords)
+    
+    # Catch Empty Database
+    k = 1
+    while player_stat == ['0', '0', '0', '0']:
+        k += 1
+        newaddress = alternate_address(address, keywords["date"], adjustment = k)
+        player_stat, position = player_page(newaddress, *variables, **keywords)
+    
     # Fix Formatting
     for i in range(len(position)):
         position[i] = position[i].replace("\n", "")
+    
+    # Remove Additions
+    remove_list = list()
+    for i in range(len(player_stat)):
+        if player_stat[i].find('+') != -1:
+            remove_list.append(i)
+        elif player_stat[i].find('-') != -1:
+            remove_list.append(i)
+        else:
+            pass
+    remove_list.reverse()
+    for i in remove_list:
+        player_stat.pop(i)
+    
     # Remove Automatically Aggregated Stats
-    if 'ignorestats' in keywords and keywords['ignorestats']:
+    if 'ignorestats' in keywords and keywords['ignorestats'] and 'futwiz' in address:
         locations = [20, 14 ,5 ,0]
         for i in range(len(locations)):
             player_stat.pop(locations[i])
+    elif 'keystats' in keywords and keywords['keystats'] and 'sofifa' in address:
+        new_stat = ['temp'] * 7
+        if len(player_stat) == 24:
+            branch_list = [4, 4, 3, 4, 2, 2, 5]
+        elif len(player_stat) == 26:
+            branch_list = [4, 4, 3, 4, 4, 2, 5]
+        elif len(player_stat) == 33:
+            branch_list = [5, 5, 5, 5, 5, 3, 5]
+        elif len(player_stat) == 34:
+            branch_list = [5, 5, 5, 5, 6, 3, 5]
+        else:
+            print "Unknown stat type."
+            quit()
+        for i in range(len(new_stat)):
+            if i != 0:
+                prev_sum = int(numpy.array(branch_list[:i]).sum())
+            else:
+                prev_sum = 0
+            templist = [int(element) for element in player_stat[prev_sum:prev_sum + branch_list[i]]]
+            new_stat[i] = numpy.mean(numpy.array(templist))
+            i += 1
+        player_stat = [str(element) for element in new_stat]
     return player_stat, position[0]
 
 # Get Player Stats from Address
@@ -275,9 +486,16 @@ def bulk_player_stats(addresses, *variables, **keywords):
 
 # Get Player Stats from Name
 def search_stats(database, player_name, *variables, **keywords):
-    address = search_player(database, player_name)
+    address = search_player(database, player_name, *variables, **keywords)
     stats, position = player_stats(address, *variables, **keywords)
     return stats, position
+
+# Gets Player Stats from List of Names
+def bulk_search_stats(database, player_names, *variables, **keywords):
+    players_stat = list()
+    addresses = bulk_search_player(database, player_names, *variables, **keywords)
+    stats = bulk_player_stats(addresses, *variables, **keywords)
+    return stats
 
 # Average Players Stats over Position
 def position_average(old_team, positions):
@@ -292,6 +510,7 @@ def position_average(old_team, positions):
     for i in range(len(old_team)):
         # Determine Most Used Position
         position = reformat_position(positions[i])
+        
         # Determine Position
         if position == "GK":
             k = 0
@@ -306,7 +525,7 @@ def position_average(old_team, positions):
         # Update Output Array
         counts[k] += 1.
         for j in range(len(new_team[k, :])):
-            new_team[k, j] += float(old_team[i][j])
+            new_team[k, j] = float(old_team[i][j])
     
     # Normalize Array
     for i in range(len(counts)):
@@ -336,7 +555,7 @@ def all_average(old_team):
 
 # Build Weka Header
 def weka_header(open_file, *variables, **keywords):
-    if 'average' in keywords and keywords['average'] == 'all':
+    if 'average' in keywords and keywords['average'] == 'all' and 'futwiz' in keywords['database']:
         if 'ignorestats' not in keywords or not keywords['ignorestats']:
             open_file.write("@relation training\n")
             open_file.write("@attribute 'Team 1:Mental Stats' numeric\n")
@@ -417,39 +636,39 @@ def weka_header(open_file, *variables, **keywords):
             open_file.write("@data\n")
         elif keywords['ignorestats']:
             open_file.write("@relation training\n")
-            open_file.write("@attribute 'Team 1:Aggression' numeric\n")
-            open_file.write("@attribute 'Team 1:Attack Positioning' numeric\n")
-            open_file.write("@attribute 'Team 1:Interceptions' numeric\n")
-            open_file.write("@attribute 'Team 1:Vision' numeric\n")
-            open_file.write("@attribute 'Team 1:Acceleration' numeric\n")
-            open_file.write("@attribute 'Team 1:Agility' numeric\n")
-            open_file.write("@attribute 'Team 1:Balance' numeric\n")
-            open_file.write("@attribute 'Team 1:Jumping' numeric\n")
-            open_file.write("@attribute 'Team 1:Reactions' numeric\n")
-            open_file.write("@attribute 'Team 1:Sprint Speed' numeric\n")
-            open_file.write("@attribute 'Team 1:Strength' numeric\n")
-            open_file.write("@attribute 'Team 1:Stamina' numeric\n")
-            open_file.write("@attribute 'Team 1:Diving' numeric\n")
-            open_file.write("@attribute 'Team 1:Handling' numeric\n")
-            open_file.write("@attribute 'Team 1:Kicking' numeric\n")
-            open_file.write("@attribute 'Team 1:Reflexes' numeric\n")
-            open_file.write("@attribute 'Team 1:Positioning' numeric\n")
-            open_file.write("@attribute 'Team 1:Ball Control' numeric\n")
-            open_file.write("@attribute 'Team 1:Crossing' numeric\n")
-            open_file.write("@attribute 'Team 1:Curve' numeric\n")
-            open_file.write("@attribute 'Team 1:Dribbing' numeric\n")
-            open_file.write("@attribute 'Team 1:Finishing' numeric\n")
-            open_file.write("@attribute 'Team 1:Free Kick' numeric\n")
-            open_file.write("@attribute 'Team 1:Heading Accuracy' numeric\n")
-            open_file.write("@attribute 'Team 1:Long Passing' numeric\n")
-            open_file.write("@attribute 'Team 1:Long Shots' numeric\n")
-            open_file.write("@attribute 'Team 1:Marking' numeric\n")
-            open_file.write("@attribute 'Team 1:Penalties' numeric\n")
-            open_file.write("@attribute 'Team 1:Short Passing' numeric\n")
-            open_file.write("@attribute 'Team 1:Shot Power' numeric\n")
-            open_file.write("@attribute 'Team 1:Siding Tackle' numeric\n")
-            open_file.write("@attribute 'Team 1:Standing Tackle' numeric\n")
-            open_file.write("@attribute 'Team 1:Volleys' numeric\n")
+            open_file.write("@attribute 'Team 1: Aggression' numeric\n")
+            open_file.write("@attribute 'Team 1: Attack Positioning' numeric\n")
+            open_file.write("@attribute 'Team 1: Interceptions' numeric\n")
+            open_file.write("@attribute 'Team 1: Vision' numeric\n")
+            open_file.write("@attribute 'Team 1: Acceleration' numeric\n")
+            open_file.write("@attribute 'Team 1: Agility' numeric\n")
+            open_file.write("@attribute 'Team 1: Balance' numeric\n")
+            open_file.write("@attribute 'Team 1: Jumping' numeric\n")
+            open_file.write("@attribute 'Team 1: Reactions' numeric\n")
+            open_file.write("@attribute 'Team 1: Sprint Speed' numeric\n")
+            open_file.write("@attribute 'Team 1: Strength' numeric\n")
+            open_file.write("@attribute 'Team 1: Stamina' numeric\n")
+            open_file.write("@attribute 'Team 1: Diving' numeric\n")
+            open_file.write("@attribute 'Team 1: Handling' numeric\n")
+            open_file.write("@attribute 'Team 1: Kicking' numeric\n")
+            open_file.write("@attribute 'Team 1: Reflexes' numeric\n")
+            open_file.write("@attribute 'Team 1: Positioning' numeric\n")
+            open_file.write("@attribute 'Team 1: Ball Control' numeric\n")
+            open_file.write("@attribute 'Team 1: Crossing' numeric\n")
+            open_file.write("@attribute 'Team 1: Curve' numeric\n")
+            open_file.write("@attribute 'Team 1: Dribbing' numeric\n")
+            open_file.write("@attribute 'Team 1: Finishing' numeric\n")
+            open_file.write("@attribute 'Team 1: Free Kick' numeric\n")
+            open_file.write("@attribute 'Team 1: Heading Accuracy' numeric\n")
+            open_file.write("@attribute 'Team 1: Long Passing' numeric\n")
+            open_file.write("@attribute 'Team 1: Long Shots' numeric\n")
+            open_file.write("@attribute 'Team 1: Marking' numeric\n")
+            open_file.write("@attribute 'Team 1: Penalties' numeric\n")
+            open_file.write("@attribute 'Team 1: Short Passing' numeric\n")
+            open_file.write("@attribute 'Team 1: Shot Power' numeric\n")
+            open_file.write("@attribute 'Team 1: Siding Tackle' numeric\n")
+            open_file.write("@attribute 'Team 1: Standing Tackle' numeric\n")
+            open_file.write("@attribute 'Team 1: Volleys' numeric\n")
             open_file.write("@attribute 'Team 2: Aggression' numeric\n")
             open_file.write("@attribute 'Team 2: Attack Positioning' numeric\n")
             open_file.write("@attribute 'Team 2: Interceptions' numeric\n")
@@ -486,20 +705,113 @@ def weka_header(open_file, *variables, **keywords):
             open_file.write("@attribute 'Outcome' {0, 1, 2}\n")
             open_file.write("@data\n")
         else:
-            print "Error, unkown formatting."
+            print "Error, unknown formatting."
             quit()
+    elif 'average' in keywords and keywords['average'] == 'position' and 'sofifa' in keywords['database']:
+        if 'keystats' not in keywords or not keywords['keystats']: # CURRENTLY NOT CORRECTLY PROCESSED
+            open_file.write("@relation training\n")
+            open_file.write("@attribute 'Team 1: Aggression' numeric\n")
+            open_file.write("@attribute 'Team 1: Attack Positioning' numeric\n")
+            open_file.write("@attribute 'Team 1: Interceptions' numeric\n")
+            open_file.write("@attribute 'Team 1: Vision' numeric\n")
+            open_file.write("@attribute 'Team 1: Acceleration' numeric\n")
+            open_file.write("@attribute 'Team 1: Agility' numeric\n")
+            open_file.write("@attribute 'Team 1: Balance' numeric\n")
+            open_file.write("@attribute 'Team 1: Jumping' numeric\n")
+            open_file.write("@attribute 'Team 1: Reactions' numeric\n")
+            open_file.write("@attribute 'Team 1: Sprint Speed' numeric\n")
+            open_file.write("@attribute 'Team 1: Strength' numeric\n")
+            open_file.write("@attribute 'Team 1: Stamina' numeric\n")
+            open_file.write("@attribute 'Team 1: Diving' numeric\n")
+            open_file.write("@attribute 'Team 1: Handling' numeric\n")
+            open_file.write("@attribute 'Team 1: Kicking' numeric\n")
+            open_file.write("@attribute 'Team 1: Reflexes' numeric\n")
+            open_file.write("@attribute 'Team 1: Positioning' numeric\n")
+            open_file.write("@attribute 'Team 1: Ball Control' numeric\n")
+            open_file.write("@attribute 'Team 1: Crossing' numeric\n")
+            open_file.write("@attribute 'Team 1: Curve' numeric\n")
+            open_file.write("@attribute 'Team 1: Dribbing' numeric\n")
+            open_file.write("@attribute 'Team 1: Finishing' numeric\n")
+            open_file.write("@attribute 'Team 1: Free Kick' numeric\n")
+            open_file.write("@attribute 'Team 1: Heading Accuracy' numeric\n")
+            open_file.write("@attribute 'Team 1: Long Passing' numeric\n")
+            open_file.write("@attribute 'Team 1: Long Shots' numeric\n")
+            open_file.write("@attribute 'Team 1: Marking' numeric\n")
+            open_file.write("@attribute 'Team 1: Penalties' numeric\n")
+            open_file.write("@attribute 'Team 1: Short Passing' numeric\n")
+            open_file.write("@attribute 'Team 1: Shot Power' numeric\n")
+            open_file.write("@attribute 'Team 1: Siding Tackle' numeric\n")
+            open_file.write("@attribute 'Team 1: Standing Tackle' numeric\n")
+            open_file.write("@attribute 'Team 1: Volleys' numeric\n")
+            open_file.write("@attribute 'Team 2: Aggression' numeric\n")
+            open_file.write("@attribute 'Team 2: Attack Positioning' numeric\n")
+            open_file.write("@attribute 'Team 2: Interceptions' numeric\n")
+            open_file.write("@attribute 'Team 2: Vision' numeric\n")
+            open_file.write("@attribute 'Team 2: Acceleration' numeric\n")
+            open_file.write("@attribute 'Team 2: Agility' numeric\n")
+            open_file.write("@attribute 'Team 2: Balance' numeric\n")
+            open_file.write("@attribute 'Team 2: Jumping' numeric\n")
+            open_file.write("@attribute 'Team 2: Reactions' numeric\n")
+            open_file.write("@attribute 'Team 2: Sprint Speed' numeric\n")
+            open_file.write("@attribute 'Team 2: Strength' numeric\n")
+            open_file.write("@attribute 'Team 2: Stamina' numeric\n")
+            open_file.write("@attribute 'Team 2: Diving' numeric\n")
+            open_file.write("@attribute 'Team 2: Handling' numeric\n")
+            open_file.write("@attribute 'Team 2: Kicking' numeric\n")
+            open_file.write("@attribute 'Team 2: Reflexes' numeric\n")
+            open_file.write("@attribute 'Team 2: Positioning' numeric\n")
+            open_file.write("@attribute 'Team 2: Ball Control' numeric\n")
+            open_file.write("@attribute 'Team 2: Crossing' numeric\n")
+            open_file.write("@attribute 'Team 2: Curve' numeric\n")
+            open_file.write("@attribute 'Team 2: Dribbing' numeric\n")
+            open_file.write("@attribute 'Team 2: Finishing' numeric\n")
+            open_file.write("@attribute 'Team 2: Free Kick' numeric\n")
+            open_file.write("@attribute 'Team 2: Heading Accuracy' numeric\n")
+            open_file.write("@attribute 'Team 2: Long Passing' numeric\n")
+            open_file.write("@attribute 'Team 2: Long Shots' numeric\n")
+            open_file.write("@attribute 'Team 2: Marking' numeric\n")
+            open_file.write("@attribute 'Team 2: Penalties' numeric\n")
+            open_file.write("@attribute 'Team 2: Short Passing' numeric\n")
+            open_file.write("@attribute 'Team 2: Shot Power' numeric\n")
+            open_file.write("@attribute 'Team 2: Siding Tackle' numeric\n")
+            open_file.write("@attribute 'Team 2: Standing Tackle' numeric\n")
+            open_file.write("@attribute 'Team 2: Volleys' numeric\n")
+            open_file.write("@attribute 'Outcome' {0, 1, 2}\n")
+            open_file.write("@data\n")
+        if keywords['keystats']:
+            open_file.write("@relation training\n")
+            for team in ['Team 1', 'Team 2']:
+                for position in ['Goalkeeper', 'Defender', 'Midfielder', 'Forward']:
+                    open_file.write("@attribute '" + str(team) + ": " + str(position) + ": Attacking' numeric\n")
+                    open_file.write("@attribute '" + str(team) + ": " + str(position) + ": Skill' numeric\n")
+                    open_file.write("@attribute '" + str(team) + ": " + str(position) + ": Movement' numeric\n")
+                    open_file.write("@attribute '" + str(team) + ": " + str(position) + ": Power' numeric\n")
+                    open_file.write("@attribute '" + str(team) + ": " + str(position) + ": Mentality' numeric\n")
+                    open_file.write("@attribute '" + str(team) + ": " + str(position) + ": Defending' numeric\n")
+                    open_file.write("@attribute '" + str(team) + ": " + str(position) + ": Goalkeeping' numeric\n")
+                open_file.write("@attribute '" + str(team) + ": Number of Goalkeepers' numeric\n")
+                open_file.write("@attribute '" + str(team) + ": Number of Defenders' numeric\n")
+                open_file.write("@attribute '" + str(team) + ": Number of Midfielders' numeric\n")
+                open_file.write("@attribute '" + str(team) + ": Number of Strikers' numeric\n")
+            open_file.write("@attribute 'Outcome' {0, 1, 2}\n")
+            open_file.write("@data\n")
+        else:
+            print "Error, unknown formatting."
+            quit()
+    else:
+        quit()
 
-# Gets Player Stats from List of Names
-def bulk_search_stats(database, player_names, *variables, **keywords):
-    players_stat = list()
-    addresses = bulk_search_player(database, player_names)
-    stats = bulk_player_stats(addresses, *variables, **keywords)
-    return stats
-
-# Build Database Array from Starting Page ['www.futwiz.com']
+# Build Database Array from Starting Page
 def build_database_array(base_site):
     # Initialize
-    root_site  = 'http://www.futwiz.com'
+    if 'sofifa' in base_site:
+        root_site  = 'http://www.sofifa.com'
+        increment  = 80
+    elif 'futwiz' in base_site:
+        root_site  = 'http://www.futwiz.com'
+        increment  = 1
+    else:
+        quit()
     i = 0; full_player_list = list()
     full_player_addresses   = list()
     
@@ -508,26 +820,47 @@ def build_database_array(base_site):
         # Get Data from One Page
         player_page_base  = requests.get(base_site + str(i))
         player_page_html  = lxml.html.fromstring(player_page_base.content)
-        player_page_names = player_page_html.xpath('//strong/text()')
+        if 'sofifa' in base_site:
+            player_page_names = player_page_html.xpath('//td/a[@class=""]/@title')
+        elif 'futwiz' in base_site:
+            player_page_names = player_page_html.xpath('//strong/text()')
+        else:
+            quit()
         
         # Kill on Last Page
         if len(player_page_names) == 0:
             break
         
         # Get Webpage for Player
-        player_addresses = player_page_html.xpath('//td/div/a/@href')
+        if 'sofifa' in base_site:
+            player_addresses = player_page_html.xpath('//td/a[@class=""]/@href')
+        elif 'futwiz' in base_site:
+            player_addresses = player_page_html.xpath('//td/div/a/@href')
+        else:
+            quit()
         player_addresses = [root_site + address for address in player_addresses]
         
         # Reformat Names
-        for j in range(len(player_page_names)):
-            player_page_names[j] = reformat_name(player_page_names[j])
+        player_page_names = reformat_name(player_page_names)
         
         # Update Database
         full_player_list      += player_page_names
         full_player_addresses += player_addresses
         
         # Iterate
-        i += 1
+        i += increment
             
     # Return Names and Addresses
     return full_player_list, full_player_addresses
+
+# Merge Databases
+def merge_databases(databases, merged_name):
+    new_file = io.open(merged_name, 'w', encoding = 'utf-8')
+    for database in databases:
+        open_file = io.open(database, encoding = 'utf-8')
+        for line in open_file:
+            player_name = line.split('\t')[0]
+            if search_player(merged_name, player_name, automatic = True) == "FAIL":
+                new_file.write(line)
+            else:
+                pass

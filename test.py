@@ -10,11 +10,18 @@ import os
 
 
 
-
+#"""
+databases = ["sofifa_database.txt"]
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
-dfu.results_processor("results.txt",
-                      "futwiz_database_17.txt",
-                      average = 'all',
-                      status = 10,
-                      ignoreplayers = 7,
-                      ignorestats = True)
+for i in range(10):
+    try:
+        dfu.results_processor("match_list_eng-premier-league_2015-2016.txt",
+                              "sofifa_database_16.txt",
+                              average = 'position',
+                              status = 10,
+                              ignoreplayers = 7,
+                              keystats = True,
+                              databases = databases)
+    except:
+        time.sleep(10)
+#"""

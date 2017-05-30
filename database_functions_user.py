@@ -14,11 +14,11 @@ import io
 # Output:   Same as input
 def reformat(string, *type, **keywords):
     if "type" in keywords:
-        if keywords["type"] == "position":
+        if keywords["type"].lower() in ["position", "positions"]:
             return dfh.reformat_position(string)
-        elif keywords["type"] == "score":
+        elif keywords["type"].lower() in ["score", "scores"]:
             return dfh.reformat_score(string)
-        elif keywords["type"] == "date":
+        elif keywords["type"].lower() in ["date", "dates"]:
             return dfh.reformat_date(string)
     return dfh.reformat_name(string)
 
@@ -27,11 +27,11 @@ def reformat(string, *type, **keywords):
 # Input 2:  String or List of Strings
 # Function: Finds web address of player name(s)
 # Output:   Same as input 2
-def search_player(database, player_name):
+def search_player(database, player_name, *variables, **keywords):
     if type(player_name) == list:
-        return dfh.bulk_search_player(database, player_name)
+        return dfh.bulk_search_player(database, player_name, *variables, **keywords)
     else:
-        return dfh.search_player(database, player_name)
+        return dfh.search_player(database, player_name, *variables, **keywords)
 
 ## Retrieve Stats from Address ##
 # Input:    Web address of player
@@ -57,12 +57,9 @@ def search_stats(database, player_name, *variables, **keywords):
 
 ## Builds Database of Names and Addresses ##
 # Input 1:  Output Filename (string)
-# Input 2:  Year of game (16, 17, etc...)
+# Input 2:  Base Site [i.e. "https://sofifa.com/players?offset="]
 # Function: Builds text file with lines of name \t address
-def build_database_file(file_name, year):
-    # Initializations
-    base_site = 'http://www.futwiz.com/en/fifa' + str(year) + '/career-mode/players?page='
-
+def build_database_file(file_name, base_site):
     # Build Database
     player_names, player_addresses = dfh.build_database_array(base_site)
 
@@ -79,6 +76,7 @@ def build_database_file(file_name, year):
 # Input 1:  Input Filename (string)
 # Input 2:  Database Location
 # Input 3:  'average' = 'position' or 'all', 'ignoreplayers = integer', 'status = integer'
+#           'ignorestats' = True, 'keystats' = True
 # Function: Makes new file with stats instead of names
 def results_processor(file_name, database, *variables, **keywords):
     # Initialize
@@ -112,7 +110,7 @@ def results_processor(file_name, database, *variables, **keywords):
     
     # Add Weka Header - Add Options Later
     if not update:
-        dfh.weka_header(new_file, *variables, **keywords)
+        dfh.weka_header(new_file, database = database, *variables, **keywords)
     new_file.close()
     
     # Iterate through Matches
@@ -131,10 +129,7 @@ def results_processor(file_name, database, *variables, **keywords):
         # Grab Score
         temp_score  = [temp_line.pop(0), temp_line.pop(0)]
         # Grab Team Stats
-        if 'ignorestats' in keywords:
-            new_team, p = search_stats(database, temp_line, date = temp_date, ignorestats = keywords['ignorestats'])
-        else:
-            new_team, p = search_stats(database, temp_line, date = temp_date)
+        new_team, p = search_stats(database, temp_line, date = temp_date, *variables, **keywords)
         # Split Into Two Teams
         team_one = new_team[:len(new_team)/2]
         team_two = new_team[len(new_team)/2:]
@@ -150,11 +145,15 @@ def results_processor(file_name, database, *variables, **keywords):
         if 'average' in keywords and keywords['average'] == 'position':
             team_one, counts_one = dfh.position_average(team_one, p)
             team_two, counts_two = dfh.position_average(team_two, p)
+            if numpy.nan in team_one or numpy.nan in team_two:
+                print temp_line
+                print team_one
+                print team_two
             for row in team_one:
                 for element in row:
                     new_line += str(element) + ', '
-                for element in counts_one:
-                    new_line += str(element) + ', '
+            for element in counts_one:
+                new_line += str(element) + ', '
             for row in team_two:
                 for element in row:
                     new_line += str(element) + ', '
