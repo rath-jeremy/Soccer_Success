@@ -182,7 +182,7 @@ def reformat_position(position):
         elif position in forward:
             return "ST"
         else:
-            assert position in (goalkeeper + defender + midfielder + forward), "Error! Position unknown."
+            assert position in (goalkeeper + defender + midfielder + forward), "Error! Position " + str(position) + " is unknown."
     else:
         positions = ['temp'] * len(position)
         for i in range(len(position)):
@@ -465,7 +465,7 @@ def player_stats(address, *variables, **keywords):
         elif len(player_stat) == 34:
             branch_list = [5, 5, 5, 5, 6, 3, 5]
         else:
-            print "Unknown stat type."
+            print "Unknown stat type. The length is " + str(len(player_stat)) + "."
             quit()
         for i in range(len(new_stat)):
             if i != 0:
