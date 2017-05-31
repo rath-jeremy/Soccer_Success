@@ -11,9 +11,9 @@ import os
 
 
 #"""
-databases = ["sofifa_database.txt"]
+databases = ["sofifa_database.txt"]; i = 1
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
-for i in range(10):
+while i > 0:
     try:
         dfu.results_processor("match_list_eng-premier-league_2015-2016.txt",
                               "sofifa_database_16.txt",
@@ -22,6 +22,7 @@ for i in range(10):
                               ignoreplayers = 7,
                               keystats = True,
                               databases = databases)
+        i = -1
     except requests.exceptions.ConnectionError:
         print "Error!"
         time.sleep(10)

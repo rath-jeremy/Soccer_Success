@@ -22,6 +22,7 @@ while i > 0:
                               ignoreplayers = 7,
                               keystats = True,
                               databases = databases)
+        i = -1
     except requests.exceptions.ConnectionError:
         print "Error!"
         time.sleep(10)
