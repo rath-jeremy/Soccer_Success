@@ -6,5 +6,3 @@ database_functions_helper.py is a script that is full of smaller functions that 
 database_function_user.py is a more commented script of functions that are in a more usable format for building a database and then using that database to convert match data to arff data for us in Weka.
 
 database_builder.py applies the database building function to build a database.
-
-test.py applies the result processing function.
