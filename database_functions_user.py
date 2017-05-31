@@ -138,7 +138,7 @@ def results_processor(file_name, database, *variables, **keywords):
             team_one = team_one[:len(team_one) - keywords['ignoreplayers']]
             team_two = team_two[:len(team_two) - keywords['ignoreplayers']]
         # Catch Incorrect Team Sizes
-        assert len(team_one) == len(team_two), "Error! Unknown team sizes."
+        assert len(team_one) == len(team_two), "Error! Unknown team sizes. Crash on line " + str(current_line) + "."
         # Save Stats
         new_line = ''
         # Average Team Stats [if asked]
