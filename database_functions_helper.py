@@ -362,7 +362,7 @@ def search_player(database, player_name, *variables, **keywords):
             new_name = raw_input("   Alternate Identifier:")
             if new_name == 'quit':
                 break
-            if done not in **keywords or not keywords['done']:
+            if done not in keywords or not keywords['done']:
                 keywords['done'] = True
             address = search_player(database, new_name, *variables, **keywords)
             open_file.write(player_name + '\t' + address + '\n')
