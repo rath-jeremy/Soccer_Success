@@ -538,15 +538,15 @@ def position_average(old_team, positions):
 
 # Average Players Stats
 def all_average(old_team):
-    # Initialize Counts
-    
     # Initialize Output List
     new_team = numpy.zeros(len(old_team[0]))
     
     # Update Output List
     for i in range(len(old_team)):
+        if len(old_team[i]) != len(new_team):
+            return "FAILED"
         # Add Player to Stat
-        for j in range(len(new_team)):
+        for j in range(len(old_team[i])):
             new_team[j] += float(old_team[i][j])
     
     # Normalize Array

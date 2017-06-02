@@ -162,10 +162,13 @@ def results_processor(file_name, database, *variables, **keywords):
         elif 'average' in keywords and keywords['average'] == 'all':
             team_one = dfh.all_average(team_one)
             team_two = dfh.all_average(team_two)
-            for element in team_one:
-                new_line += str(element) + ', '
-            for element in team_two:
-                new_line += str(element) + ', '
+            if team_one == "FAILED" or team_two == "FAILED":
+                new_line = "FAILED"
+            else:
+                for element in team_one:
+                    new_line += str(element) + ', '
+                for element in team_two:
+                    new_line += str(element) + ', '
         else:
             print "Error, average method not incorporated."
             quit()
