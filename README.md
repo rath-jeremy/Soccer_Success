@@ -5,6 +5,15 @@ Northwestern University
 
 [Repository for codes and data](https://github.com/TheLordBlarg/Soccer_Success)
 
+# Motivation
+
+Predicting the outcome of sports matches is one of the favorite topics for statisticians and gamblers alike. For soccer, previous prediction methods mostly used team-level features while neglecting individual skills. Our hypothesis is that such a collectivist approach glossing over the intrinsic worth of an individual is ideologically flawed. Therefore, in this project, we sought to develop a machine learning strategy to predict the outcomes of soccer matches based mainly on the individual attributes of the players on each team.
+
+# Approach
+
+
+
+
 ![](figures/test.jpg)
 *A pretty girl*
 
