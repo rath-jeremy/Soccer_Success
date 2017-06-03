@@ -11,7 +11,11 @@ Predicting the outcome of sports matches is one of the favorite topics for stati
 
 # Approach
 
+Our novel approach uses in-game stats from the Electronic Arts' celebrated game franchise FIFA, [which were painstakingly crafted by the experts](http://www.espnfc.us/blog/espn-fc-united-blog/68/post/2959703/fifa-17-player-ratings-system-blends-advanced-stats-and-subjective-scouting).
 
+# Results
+
+Unfortunately, we have failed. Soccer is fundamentally a collectivist sport. Socialist Soccer Success!
 
 
 ![](figures/test.jpg)
