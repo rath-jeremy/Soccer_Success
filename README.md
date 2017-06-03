@@ -5,7 +5,7 @@ Northwestern University
 
 [Repository for codes and data](https://github.com/TheLordBlarg/Soccer_Success)
 
-![](figures/test.png)
+![](figures/test.jpg)
 
 # Soccer_Predictions
 This is the current version of the code which will build a player database and use that database convert a match list to an arff format for use in a machine learning program.
