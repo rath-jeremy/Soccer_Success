@@ -171,8 +171,8 @@ def gradient_descent(X,y,C,X_val,y_val,H,W1 = None, W2 = None):
 if __name__=="__main__":
     time_start = time.time()
 
-    inputfile = 'results_new_2016-2017.arff'                 # Dataset
-    testfile = 'results_new_2016-2017.arff'                      # Test set
+    inputfile = 'results_train_excl2015-2016.arff'                 # Dataset
+    testfile = 'results_test_2015-2016.arff'                      # Test set
     outputfile = 'weight.csv'                   # Weights learned
     outputfile2 = 'errors.csv'                  # Training/CV errors
     K = 10                                      # Number of folds

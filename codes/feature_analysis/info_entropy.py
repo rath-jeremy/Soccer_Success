@@ -95,7 +95,7 @@ def cond_entropy(X,y,C,variable_names):
             
 # Output ------------------------------------------------------------------
 
-def saveentropy(variable_names,entropy,threshold,outputfile='entropy.csv'):
+def saveentropy(variable_names,entropy,threshold,prior_ent,outputfile='entropy.csv'):
     # Reshape arrays
     variable_array = np.array(variable_names)
     variable_list = np.reshape(variable_array,[variable_array.size,1])
@@ -106,12 +106,12 @@ def saveentropy(variable_names,entropy,threshold,outputfile='entropy.csv'):
     combined = np.hstack((variable_list,entropy,threshold))
     
     # Write
-    hdr = 'Variable, entropy gain, threshold'
+    hdr = 'Variable, entropy gain (prior entropy = ' + str(prior_ent) + ') , threshold'
     np.savetxt(outputfile,combined,delimiter=',',header=hdr,fmt='%s')
     
 if __name__=="__main__":
-    inputfile = 'results_old_2016-2017.arff'
-    outputfile = 'entropy_old_2016-2017.csv'
+    inputfile = 'results_2016-2017_esp-primera-division.arff'
+    outputfile = 'entropy_2016-2017_esp-primera-division.csv'
     
     X, y, C, variable_names = load_data(inputfile)
     variable_names = variable_names[:-1]    # Remove outcome
@@ -123,4 +123,4 @@ if __name__=="__main__":
     
     entropies_gain = entropy_prior - entropy_remain
     
-    saveentropy(variable_names,entropies_gain,thresholds,outputfile)
+    saveentropy(variable_names,entropies_gain,thresholds,entropy_prior,outputfile)

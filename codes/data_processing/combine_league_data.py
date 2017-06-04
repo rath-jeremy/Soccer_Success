@@ -3,12 +3,20 @@
 import tkinter as tk
 from tkinter import filedialog
 import os
+import numpy as np
 
-outputfile = 'results_new_2013-2014.arff'
-exclude_seasons = ['2015-2016']                                                 # Training data
-exclude_seasons = ['2010-2011','2011-2012','2012-2013','2013-2014','2014-2015','2016-2017'] # Test data
+# Settings -----------------------------------------------------------------
 
-exclude_seasons = ['2010-2011','2011-2012','2012-2013','2014-2015','2015-2016','2016-2017'] # 2 Most recent season
+outputfile = 'results_test_2015-2016_normalized.arff'
+normalization = True
+
+# Leagues (eng-premier-league, bundesliga, esp-primera-division)
+leagues = ['eng-premier-league']
+# Seasons
+#seasons = ['2010-2011','2011-2012','2012-2013','2013-2014','2014-2015','2016-2017']
+seasons = ['2015-2016']
+
+# Main ----------------------------------------------------------------------
 
 # Use GUI to obtain data directory
 root = tk.Tk()
@@ -25,13 +33,11 @@ for file in f_list:
     
     if filename[0] != 'match':              # Not data file
         continue
-    if filename[-1] in exclude_seasons:     # Excluded season
-        continue
-        
-    dname_list.append(dpath + '/' + file.name)
+    if filename[-1] in seasons and filename[-2] in leagues:
+        dname_list.append(dpath + '/' + file.name)
 
 # Extract data and save to outputfile
-f_out = open(outputfile, 'w')
+f_out = open(dpath + '/' + outputfile, 'w')
 
 for i in range(len(dname_list)):
     dname = dname_list[i]
@@ -50,6 +56,17 @@ for i in range(len(dname_list)):
     for line in f_data:
         if 'nan' in line:
             continue
-        f_out.write(line)
+        if normalization:
+            line_split = line.split(',')
+            line_num = np.array([float(x) for x in line_split[:-1]])
+            class_num = int(line_split[-1])
+            line_norm = line_num/100
+            line_str = [str(x) for x in line_norm]
+            line_join = ','.join(line_str) + ','+str(class_num) + '\n'
+            f_out.write(line_join)
+        else:
+            f_out.write(line)
+        
+    f_data.close()
         
 f_out.close()
