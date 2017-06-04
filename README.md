@@ -4,6 +4,7 @@ EECS 349 Machine Learning
 Northwestern University
 
 [Repository for codes and data](https://github.com/TheLordBlarg/Soccer_Success)
+[Detailed report](https://github.com/TheLordBlarg/Soccer_Success/raw/master/report/project_report.pdf)
 
 # Motivation
 
