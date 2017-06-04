@@ -1,0 +1,135 @@
+\documentclass[a4paper,11pt,table]{article}
+%Import Packages %\[
+\usepackage{fullpage}                                                   %This sets the margines to standard.
+\usepackage{cancel}                                                     %This allows commands to put lines through terms.
+\usepackage{mathtools}                                                  %This adds a series of packages designed to enhance the appearance of documents containing a lot of mathematics.
+\usepackage{amsmath,amssymb,amsfonts,amsthm}                            %This adds many math commands.
+\usepackage{setspace}                                                   %This allows for double or single spacing commands.
+\usepackage{tikz}                                                       %This adds drawing features.
+\usepackage{pgfplots}                                                   %This adds function plotting.
+\usepackage{chngcntr}                                                   %This allows for convenient numbering.
+\usepackage{fancyhdr}                                                   %This allows for a nice header.
+\usepackage{caption}                                                    %This allows for custom captions.
+\usepackage{listings}
+\usepackage{graphicx}\graphicspath{{"Final Project"/}}                     %This allows the import and display of figures. %\]
+%Renew Commands %\[
+\renewcommand{\t}{\text}                                                %This is a shortcut for the text environment.
+\renewcommand{\c}{\cdot}                                                %This is a shortcut for the dot operator.
+\renewcommand{\sp}[1]{\left[#1\right]}                                  %This is a shortcut for hard brackets.
+\renewcommand{\P}{\mathbb{P}}                                           %This is a shortcut for blackboard P.
+\renewcommand{\l}{\ell}                                                 %This is a shortcut for script l.
+\renewcommand{\rm}[1]{\begin{bmatrix*}[r] #1\end{bmatrix*}}             %This is a shortcut for a matrix.
+\renewcommand{\i}{\overline{i}}                                         %This is a shortcut for i conjugate.
+\renewcommand{\j}{\overline{j}}                                         %This is a shortcut for j conjugate.
+\renewcommand{\k}{\overline{k}}                                         %This is a shortcut for k conjugate.
+\renewcommand{\l}{\overline{l}}                                         %This is a shortcut for k conjugate.
+\renewcommand{\r}{\scriptr}                                             %This is a shortcut for script r.%\]
+%New Commands %\[
+\newcommand*\rfrac[2]{{}^{#1}\!/_{#2}}                                  %This creates a one line fraction.
+\newcommand{\ptl}[2]{\frac{\partial #1}{\partial #2}}                   %This is a shortcut for partials.
+\newcommand{\sptl}[2]{\frac{\partial^2 #1}{\partial #2^2}}              %This is a shortcut for second partials.
+\newcommand{\p}[1]{\left(#1\right)}                                     %This is a shortcut for parenthesis.
+\newcommand{\hb}[1]{\left[#1\right]}                                    %This is a shortcut for hard brackets.
+\newcommand{\set}[1]{\left\{#1\right\}}                                 %This is a shortcut for set notation.
+\newcommand{\bra}[1]{\langle #1 |}                                      %This is a shortcut for bras.
+\newcommand{\ket}[1]{| #1 \rangle}                                      %This is a shortcut for Kets.
+\newcommand{\R}{\mathbb{R}}                                             %This is a shortcut for blackboard R.
+\newcommand{\Z}{\mathbb{Z}}                                             %This is a shortcut for blackboard Z.
+\newcommand{\N}{\mathbb{N}}                                             %This is a shortcut for blackboard N.
+\newcommand{\C}{\mathbb{C}}                                             %This is a shortcut for blackboard C.
+\newcommand{\Q}{\mathbb{Q}}                                             %This is a shortcut for blackboard C.
+\newcommand{\comm}[2]{\left[#1, #2\right]}                               %This is a shortcut for the commutation operator.
+\newcommand{\F}{\mathbb{F}}                                             %This is a shortcut for blackboard F.
+\newcommand{\fa}{\forall}                                               %This is a shortcut for the upsidedown A symbol.
+\newcommand{\m}[1]{\begin{bmatrix*}[r] #1\end{bmatrix*}}                %This is a shortcut for a matrix.
+\newcommand{\cm}[1]{\begin{bmatrix*}[c] #1\end{bmatrix*}}               %This is a shortcut for a matrix.
+\newcommand{\vm}[1]{\begin{vmatrix}#1\end{vmatrix}}                     %This is a shortcut for a matrix determinant.
+\newcommand{\beq}{\begin{displaymath}}                                  %This is a shortcut for opening equation editor.
+\newcommand{\eeq}{\end{displaymath}}                                    %This is a shortcut for closing equation editor.
+\newcommand{\xhat}{\hat{x}}                                             %This is a shortcut for the x unit vector.
+\newcommand{\yhat}{\hat{y}}                                             %This is a shortcut for the y unit vector.
+\newcommand{\zhat}{\hat{z}}                                             %This is a shortcut for the z unit vector.
+\newcommand{\Hhat}{\hat{H}}                                             %This is a shortcut for the Hamiltonian operator.
+\newcommand{\del}{\v\nabla}                                             %This is a shortcut for the del operator.
+\newcommand{\norm}[1]{\left|#1\right|}                                  %This is a shortcut for the norm operation.
+\newcommand{\normsq}[1]{\left|#1\right|^2}                              %This is a shortcut for the norm operation.
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}                            %This is a shortcut for the ceiling shorthand.
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}                         %This is a shortcut for the floor shorthand.
+\newcommand{\bvec}[1]{\mathbf{#1}}                                      %This is a shortcut for a bold character. %\]
+%New Definitions %\[
+%\[                                                                     %This is for folding in Notepad++
+\let\oldsqrt\sqrt                                                       %This redefines the sqrt function as oldsqrt.
+\def\sqrt{\mathpalette\DHLhksqrt}                                       %This line and the ones following redefine the sqrt function to be prettier.
+\def\DHLhksqrt#1#2{\setbox0=\hbox{$#1\oldsqrt{#2\,}$}%
+    \dimen0=\ht0\advance\dimen0-0.2\ht0\setbox2%
+    =\hbox{\vrule height\ht0 depth -\dimen0}{\box0\lower0.4pt\box2}}
+\def\dbar{{\mathchar'26\mkern-12mu d}}                                  %This defines the inexact differential symbol.
+%\]%\]
+\usepackage{hyperref}       % Hyperlink
+
+%Header %\[
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{}
+\chead{From Collectivism to Individualism [and so to failure]: A Tragic Soccer Tale by Kim and Rath}
+\lhead{}
+\renewcommand{\headrulewidth}{0.5pt}
+\setlength{\headheight}{12pt}
+%\]
+
+\renewcommand{\section}[1]{\stepcounter{section}\noindent\textbf{\arabic{section}.~#1}\\}
+\counterwithin{equation}{section}
+\counterwithin{figure}{section}
+
+\begin{document}
+\section{Introduction}
+
+~\\
+\section{Data Collection}
+
+~\\
+\section{Approach}
+
+The first method that we used to analyze the dataset obtained by above procedure was Weka. We used various algorithms that were identified to be promising during our preliminary investigations. Specifically, those included three tree algorithms, three Bayesian algorithms, and two logistic regression algorithms.
+
+Complementing the Weka, we decided to create our own machine learning implementation. Specifically, we wrote a \href{https://github.com/TheLordBlarg/Soccer_Success/blob/master/codes/machine_learning/msc_nn_hpc.py}{Python script} implementing a neural network with one hidden layer and three softmax output units each corresponding to the probability of the input data belonging to each class. The algorithm also uses 10-fold cross-validation with random partitioning of the dataset into training/validation sets, intentionally mirroring the Weka's approach.
+
+Finally, we sought to investigate the relative predictive power of each feature. This is not only interesting in its own right (we might be able to determine which skills are most relevant for soccer), it can also be a helpful aid for guiding machine learning implementation, in particular serving as a sanity-check for the approach. In order to measure this quantitatively, we wrote a \href{https://github.com/TheLordBlarg/Soccer_Success/blob/master/codes/feature_analysis/info_entropy.py}{Python script} that calculates, for each attribute, the maximum information gain that can be achieved by making a split along that attribute (cf. decision trees). \\
+~\\
+\section{Results}
+
+Position-averaged, categories.
+
+\begin{center}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        Algorithm               &   Premier League  &   Bundesliga  &   La Liga \\
+        \hline
+        ZeroR                   &   0.4801          &   0.4896      &   0.4878 \\
+        \hline
+        J48                     &   0.4709          &   0.3889      &   0.4177 \\
+        \hline
+        REPTree                 &   0.4618          &   0.4514      &   0.5213 \\
+        \hline
+        RandomForest            &   \cellcolor{red!25}0.5505          &   0.4896      &   0.4787 \\
+        \hline
+        NaiveBayes              &   0.3700          &   0.3299      &   0.2927 \\
+        \hline
+        BayesNet                &   0.4954          &   0.4896      &   0.4360 \\
+        \hline
+        NaiveBayesMultinomial   &   0.4037          &   0.3125      &   0.4024 \\
+        \hline
+        Logistic                &   0.4771          &   0.4479      &   0.4390 \\
+        \hline
+        SimpleLogistic          &   0.5260          &   \cellcolor{red!25}0.5000      &   \cellcolor{red!25}0.5183 \\
+        \hline
+    \end{tabular}
+    \captionof{table}{10-fold cross-validation accuracy for 2016-2017 season for three different leagues. The highest accuracy for each league has been shaded in light red. \label{tableDL}}
+\end{center}
+~\\
+\section{Discussion}
+
+~\\
+\section{Conclusion}
+
+\end{document}
