@@ -1,4 +1,4 @@
-Hyun Jin Kim <hyunkim2015@u.northwestern.edu>  
+(Jimmy) Hyun Jin Kim <hyunkim2015@u.northwestern.edu>  
 Jeremy Rath <JeremyRath2020@u.northwestern.edu>  
 EECS 349 Machine Learning  
 Northwestern University
