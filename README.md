@@ -26,8 +26,14 @@ Our novel approach uses in-game stats from the Electronic Arts' celebrated game 
 
 Unfortunately, we have failed. Soccer is fundamentally a collectivist sport. Socialist Soccer Success!
 
-![](report/figures/test.jpg)
-*A pretty girl*
+![](report/figures/result_weka.jpg)
+*Results from select algorithms in Weka*
+
+![](report/figures/figLC.jpg)
+*Typical learning curve for custom-made single layer neural network*
+
+![](report/figures/result_features.jpg)
+*List of select features ordered by their information gain. Full list available [in the repository](https://github.com/TheLordBlarg/Soccer_Success/blob/master/results/entropy_train.csv)*
 
 # Soccer_Predictions
 This is the current version of the code which will build a player database and use that database convert a match list to an arff format for use in a machine learning program.
