@@ -108,7 +108,7 @@ Finally, we sought to investigate the relative predictive power of each feature.
 \section{Results}
 As mentioned above, we used 2104 Premier League matches played in 2010-2017, minus the 2015-2016 season, as our training and cross-validation set. 273 matches played in the 2015-2016 season was set aside as the test set.
 
-Table \ref{table1} shows the results of various Weka algorithms. Sadly, none of the algorithms performed significantly better than the ZeroR baseline, measured in terms of their 10-fold cross-validation accuracy. Logistic regression, which performed the best, only yielded a 3\% improvement over the baseline. Furthermore, its test accuracy was significantly lower than the CV-accuracy, indicating that the generalization is poor.
+Table \ref{table1} shows the results of various Weka algorithms. Sadly, none of the algorithms performed significantly better than the ZeroR baseline, measured in terms of their 10-fold cross-validation accuracy. Logistic regression, which performed the best, only yielded a 3\% improvement over the baseline. Furthermore, its test accuracy was significantly lower than the CV-accuracy, indicating that the generalization is poor\footnote{Note, however that the ZeroR performance has dropped significantly for the test set. This may indicate some incidental structures in the data that might be interfering with the results.}.
 
 \begin{center}
     \begin{tabular}{|c|c|c|c|}
