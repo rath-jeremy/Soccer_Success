@@ -8,7 +8,15 @@ Northwestern University
 
 # Motivation
 
-Predicting the outcome of sports matches is one of the favorite topics for statisticians and gamblers alike. For soccer, previous prediction methods mostly used team-level features while neglecting individual skills. Our hypothesis is that such a collectivist approach glossing over the intrinsic worth of an individual is ideologically flawed. Therefore, in this project, we sought to develop a machine learning strategy to predict the outcomes of soccer matches based mainly on the individual attributes of the players on each team.
+Predicting the outcome of sports matches is one of the favorite topics for statisticians and
+gamblers alike. It is an interesting problem where the question of the respective importance of
+randomness (’luck’) and determinism (’skill’) is hotly debated. Of course, much importance also
+lies in the fact that successful predictions can lead to lots of money. For soccer, previous prediction
+methods mostly used team-level features while neglecting individual skills. We hypothesize
+that individual skills are crucial to soccer and contain much information for predicting match
+outcomes which those other methods are not utilizing. Therefore, in this project, we sought to
+develop a machine learning strategy that predicts the outcomes of soccer matches based mainly
+on the individual attributes of the players on each team.
 
 # Approach
 
