@@ -79,11 +79,12 @@ def saveerrors(iter_list,train_err,val_err,outputfile='errors.csv'):
     hdr = 'Iteration,Train error,Validation error'
     np.savetxt(outputfile,combined,delimiter=',',header=hdr)
     
-def ploterr(iter_list,train_err,val_err):
+def ploterr(iter_list,train_err,val_err,H):
     plt.plot(iter_list,train_err,'r',label='Train error')
     plt.plot(iter_list,val_err,'b',label='Validation error')
     plt.ylabel('Error percentage')
     plt.xlabel('Iteration number')
+    plt.title('Hidden layer size = ' + str(H))
     plt.ylim([0,1])
     plt.legend()
     plt.show()
@@ -121,8 +122,8 @@ def gradient_descent(X,y,C,X_val,y_val,H,W1 = None, W2 = None):
     P = X.shape[1]  # Number of data points
 
     if W1 == None or W2 == None:       # No initial weight given
-        W1 = 10*np.random.randn(H,N)
-        W2 = 10*np.random.randn(C,H)
+        W1 = np.random.randn(H,N)
+        W2 = np.random.randn(C,H)
     
     # Stopping conditions
     maxnum_iter = 100     # Maximum number of iterations
@@ -176,7 +177,7 @@ if __name__=="__main__":
     outputfile = 'weight.csv'                   # Weights learned
     outputfile2 = 'errors.csv'                  # Training/CV errors
     K = 10                                      # Number of folds
-    H = 5                                      # Number of hidden units
+    H = 30                                      # Number of hidden units
     
     show_output = True
     normalization = True                        # Normalize attributes to lie on [0,1]
@@ -234,13 +235,13 @@ if __name__=="__main__":
     time_end = time.time()
 
     if show_output:
-        ploterr(iter_list,train_err,val_err)    # Plot error graph
+        ploterr(iter_list,train_err,val_err,H)    # Plot error graph
         print('lowest validation error = ' + str(val_err.min()))
         print('final train error = ' + str(train_err[-1]))
         print('final test error = ' + str(test_err))
         print('Runtime = ' + str(time_end - time_start))
     else:
-        print(str(H) + '\t' + str(test_err))   # Record lowest CV error
+        print(str(H) + '\t' + str(val_err.min()) + '\t' + str(test_err))   # Record lowest CV error and test error
     
     # Save learned weight and errors
     saveweight(W1,W2,outputfile)

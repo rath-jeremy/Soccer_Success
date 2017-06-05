@@ -110,8 +110,8 @@ def saveentropy(variable_names,entropy,threshold,prior_ent,outputfile='entropy.c
     np.savetxt(outputfile,combined,delimiter=',',header=hdr,fmt='%s')
     
 if __name__=="__main__":
-    inputfile = 'results_2016-2017_esp-primera-division.arff'
-    outputfile = 'entropy_2016-2017_esp-primera-division.csv'
+    inputfile = 'results_train_excl2015-2016.arff'
+    outputfile = 'entropy_train_excl2015-2016.csv'
     
     X, y, C, variable_names = load_data(inputfile)
     variable_names = variable_names[:-1]    # Remove outcome
