@@ -26,13 +26,13 @@ Our novel approach uses in-game stats from the Electronic Arts' celebrated game 
 
 Unfortunately, we have failed. Soccer is fundamentally a collectivist sport. Socialist Soccer Success!
 
-![](report/figures/result_weka.jpg)
+![](report/figures/result_weka.png)
 *Results from select algorithms in Weka*
 
-![](report/figures/figLC.jpg)
+![](report/figures/figLC.png)
 *Typical learning curve for custom-made single layer neural network*
 
-![](report/figures/result_features.jpg)
+![](report/figures/result_features.png)
 *List of select features ordered by their information gain. Full list available [in the repository](https://github.com/TheLordBlarg/Soccer_Success/blob/master/results/entropy_train.csv)*
 
 # Soccer_Predictions
