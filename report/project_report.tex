@@ -93,7 +93,11 @@
 Predicting the outcome of sports matches is one of the favorite topics for statisticians and gamblers alike. It is an interesting problem where the question of the respective importance of randomness ('luck') and determinism ('skill') is hotly debated. Of course, much importance also lies in the fact that successful predictions can lead to lots of money. For soccer, previous prediction methods mostly used team-level features while neglecting individual skills. We hypothesize that individual skills are crucial to soccer and contain much information for predicting match outcomes which those other methods are not utilizing. Therefore, in this project, we sought to develop a machine learning strategy that predicts the outcomes of soccer matches based mainly on the individual attributes of the players on each team. \\
 ~\\
 \section{Data Collection and Processing}
+We have implemented a vast array of programs that facilitate the process of scraping data from different websites and then pre-processing and combining them to yield consistent datasets that can be used for machine learning.
 
+Our novel approach uses as features the in-game stats from the Electronic Arts' celebrated game franchise FIFA, which were \href{http://www.espnfc.us/blog/espn-fc-united-blog/68/post/2959703/fifa-17-player-ratings-system-blends-advanced-stats-and-subjective-scouting}{painstakingly crafted by the experts}. Those numerical stats (1-100) measuring skills falling under broad categories (attacking, skill, movement, power, mentality, defending, and goalkeeping) were obtained from <https://sofifa.com>. For practical reasons, we averaged over different positions in the team (forward, midfielder, defender, goalkeeper) all the skills falling under those categories. This was then combined with the records of matches (obtained from <http://www.worldfootball.net>) to yield a dataset consisting of match outcomes and player stats. For this project, we focused on Premier League matches played in 2010-2017. After throwing away data entries plagued with various errors and difficulties, we ended up with a training set consisting of 2104 Premier League matches played in 2010-2017 minus the 2015-2016 season and a test set consisting of 273 matches played in the 2015-2016 season.
+
+This was all done by writing a \href{https://github.com/TheLordBlarg/Soccer_Success/tree/master/codes/data_processing}{vast array of programs} that facilitate all the steps from scraping raw xml off of different websites to processing and combining them to yield consistent datasets that can be used for machine learning.
 ~\\
 \section{Data Analysis Approach}
 
@@ -105,9 +109,9 @@ Finally, we sought to investigate the relative predictive power of each feature.
 ~\\
 \section{Results}
 
-Position-averaged, categories.
+As mentioned above, we used 2104 Premier League matches played in 2010-2017, minus the 2015-2016 season, as our training and cross-validation set. 273 matches played in the 2015-2016 season was set aside as the test set.
 
-All Premier League seasons sans 2015-2016 (set aside as the test set).
+Table \ref{table1} shows the results of various Weka algorithms. Sadly, none of the algorithms performed significantly better than the ZeroR baseline, measured in terms of their 10-fold cross-validation accuracy. Logistic regression, which performed the best, only yielded a 3% improvement over the baseline. Furthermore, its test accuracy was significantly lower than the CV-accuracy, indicating that the generalization is poor.
 
 \begin{center}
     \begin{tabular}{|c|c|c|c|}
@@ -133,41 +137,10 @@ All Premier League seasons sans 2015-2016 (set aside as the test set).
         SimpleLogistic          &   0.5119          &   0.4924      &   0.4139 \\
         \hline
     \end{tabular}
-    \captionof{table}{\label{table1}}
+    \captionof{table}{Training and 10-fold cross-validation accuracies for Premier League matches in 2010-2017. 2015-2016 season data was set aside as the test set to derive the test accuracy. The highest accuracy in each column has been shaded in light red. \label{table1}}
 \end{center}
 
-Three differeng leagues.
-
-\begin{center}
-    \begin{tabular}{|c|c|c|c|}
-        \hline
-        Algorithm               &   Premier League  &   Bundesliga  &   La Liga \\
-        \hline
-        ZeroR                   &   0.4801          &   0.4896      &   0.4878 \\
-        \hline
-        J48                     &   0.4709          &   0.3889      &   0.4177 \\
-        \hline
-        REPTree                 &   0.4618          &   0.4514      &   0.5213 \\
-        \hline
-        RandomForest            &   \cellcolor{red!25}0.5505          &   0.4896      &   0.4787 \\
-        \hline
-        NaiveBayes              &   0.3700          &   0.3299      &   0.2927 \\
-        \hline
-        BayesNet                &   0.4954          &   0.4896      &   0.4360 \\
-        \hline
-        NaiveBayesMultinomial   &   0.4037          &   0.3125      &   0.4024 \\
-        \hline
-        Logistic                &   0.4771          &   0.4479      &   0.4390 \\
-        \hline
-        SimpleLogistic          &   0.5260          &   \cellcolor{red!25}0.5000      &   \cellcolor{red!25}0.5183 \\
-        \hline
-    \end{tabular}
-    \captionof{table}{10-fold cross-validation accuracy for 2016-2017 season for three different leagues. The highest accuracy for each league has been shaded in light red. \label{tableDL}}
-\end{center}
-
-Neural network
-
-We have trained models using different hidden layer sizes ranging from $10-100$. One example of a learning curve (for hidden layer size = 30) is shown in Figure \ref{figLC}. It can be seen clearly that the model is incapable of fitting the dataset. In fact, essentially the same results were obtained for all values of hidden layer size used (see Figure \ref{figCVH}). While this might just suggest that the neural network architecture considered is inappropriate for this problem (for instance, more than one hidden layers may be necessary), considering that none of the other algorithms used above in Weka yielded much success, it seems more likely that the problem lies with the dataset itself.
+Our custom single hidden layer neural network implementation was no more successful. Figure \ref{figLC} shows the learning curve of the network with 30 hidden units. It is clear that there is underfitting and the model is incapable of capturing the underlying trend of the data, if there even is any. Same results were obtained for hidden layer size ranging from 10-100 units (see Figure \ref{figCVH}). This suggests that either the neural network architecture considered is insufficient (for instance, more than one hidden layers may be necessary) or, as is more likely in the light of the failures of other algorithms above, the problem lies with the dataset itself.
 
 \begin{center}
     \includegraphics[scale=0.5]{learning_curve}
@@ -176,9 +149,8 @@ We have trained models using different hidden layer sizes ranging from $10-100$.
     \captionof{figure}{\label{figCVH}}
 \end{center}
 
-Feature analysis
+Finally, Table \ref{tablefeature} lists select features and the corresponding information gain that can be obtained by making a split over the feature. Full data is available \href{https://github.com/TheLordBlarg/Soccer_Success/blob/master/results/entropy_train.csv}{in the repository}. A cursory glance suggests that skills related to goalkeeping and defending are the most important factors in deciding the outcome of a soccer match. However, this result should be taken with a grain of salt as there are also nonsensical results such as the goalkeeper's attacking or the forward's goalkeeping skills (which should be completely irrelevant to the match) yielding more information than defender's defending skills (which is clearly relevant). This further suggests that our data is seriously flawed.
 
-Table \ref{tablefeature} lists some of the features with the corresponding information gain, with more informative features towards the top. Full data is available \href{https://github.com/TheLordBlarg/Soccer_Success/blob/master/results/entropy_train.csv}{in the repository}.
 \begin{center}
     \begin{tabular}{|c|c|c|}
         \hline
@@ -211,16 +183,21 @@ Table \ref{tablefeature} lists some of the features with the corresponding infor
         53  &   Away Team; Defender; Defending      &   0.00206549 \\
         \hline
     \end{tabular}
-    \captionof{table}{Prior entropy = 1.5305276569\label{tablefeature}}
+    \captionof{table}{A selection of attributes listed in the order of decreasing information gain (in bits). Prior entropy is 1.5305276569. \label{tablefeature}}
 \end{center}
 ~\\
 \section{Discussion}
 
-In retrospect, we may have been overly optimistic and ambitious in pursuing this project. Of course, soccer is a fundamentally team-based sport and neglecting crucial factors such as formations and previous team records may have doomed the prospect of success from the beginning.
+In retrospect, we may have been overly optimistic and ambitious in pursuing this project. Of course, soccer is a fundamentally team-based sport and neglecting crucial factors such as formations and previous team records may have doomed the prospect of success from the beginning. Furthermore, quantitative measures of individual attributes, including video game stats used here, must by necessity incorporate some subjective judgments and may even be inconsistent from year to year.
 
+There are of course various alternative ways of formulating features from individual numerical stats that can be tried. However, considering that our current approach has yielded such abysmal results, we do not expect to obtain drastically improved results following this approach. It is likely that our data is fundamentally limited and it is probably better to find a different data source altogether for measuring individual skills.
+
+Finally, it may be the case that although individual attributes alone do not have enough predictive power, combining them with team-based features can yield drastically improved performance that cannot be achieved by using either set of features alone. This would be the natural direction to explore in any future work. \\
 ~\\
 \section{Conclusion}
 
+In conclusion, Soccer Success. \\
+~\\
 \section{Acknowledgements}
 Jeremy Rath worked mainly on data collection and processing. Hyun Jin Kim worked mainly on data analysis. Both authors worked on setting up the webpage and preparing this report.
 
