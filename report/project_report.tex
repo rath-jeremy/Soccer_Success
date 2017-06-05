@@ -11,7 +11,7 @@
 \usepackage{fancyhdr}                                                   %This allows for a nice header.
 \usepackage{caption}                                                    %This allows for custom captions.
 \usepackage{listings}
-\usepackage{graphicx}\graphicspath{{"Final Project"/}}                     %This allows the import and display of figures. %\]
+\usepackage{graphicx}\graphicspath{{"figures"/}}                        %This allows the import and display of figures. %\]
 %Renew Commands %\[
 \renewcommand{\t}{\text}                                                %This is a shortcut for the text environment.
 \renewcommand{\c}{\cdot}                                                %This is a shortcut for the dot operator.
@@ -77,7 +77,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \rhead{}
-\chead{From Collectivism to Individualism [and so to failure]: A Tragic Soccer Tale by Kim and Rath}
+\chead{From Collectivism to Individualism: A Conservative Paradigm for Predicting Soccer Success}
 \lhead{}
 \renewcommand{\headrulewidth}{0.5pt}
 \setlength{\headheight}{12pt}
@@ -89,18 +89,16 @@
 
 \begin{document}
 \section{Introduction}
-
-Predicting the outcome of sports matches is one of the favorite topics for statisticians and gamblers alike. It is an interesting problem where the question of the respective importance of randomness ('luck') and determinism ('skill') is hotly debated. Of course, much importance also lies in the fact that successful predictions can lead to lots of money. For soccer, previous prediction methods mostly used team-level features while neglecting individual skills. We hypothesize that individual skills are crucial to soccer and contain much information for predicting match outcomes which those other methods are not utilizing. Therefore, in this project, we sought to develop a machine learning strategy that predicts the outcomes of soccer matches based mainly on the individual attributes of the players on each team. \\
+Predicting the outcome of sports matches is one of the favorite topics for statisticians and gamblers alike. It is an interesting problem where the question of the respective importance of randomness ('luck') and determinism ('skill') is hotly debated. Of course, much importance also lies in the fact that successful predictions can lead to lots of money. For soccer, previous prediction methods mostly used team-level features based solely on the record of the team while neglecting individual skills. We hypothesize that individual skills are crucial to soccer and contain much information for predicting match outcomes which those other methods are not utilizing. Therefore, in this project, we sought to develop a machine learning strategy that predicts the outcomes of soccer matches based mainly on the individual attributes of the players on each team. \\
 ~\\
 \section{Data Collection and Processing}
 We have implemented a vast array of programs that facilitate the process of scraping data from different websites and then pre-processing and combining them to yield consistent datasets that can be used for machine learning.
 
-Our novel approach uses as features the in-game stats from the Electronic Arts' celebrated game franchise FIFA, which were \href{http://www.espnfc.us/blog/espn-fc-united-blog/68/post/2959703/fifa-17-player-ratings-system-blends-advanced-stats-and-subjective-scouting}{painstakingly crafted by the experts}. Those numerical stats (1-100) measuring skills falling under broad categories (attacking, skill, movement, power, mentality, defending, and goalkeeping) were obtained from <https://sofifa.com>. For practical reasons, we averaged over different positions in the team (forward, midfielder, defender, goalkeeper) all the skills falling under those categories. This was then combined with the records of matches (obtained from <http://www.worldfootball.net>) to yield a dataset consisting of match outcomes and player stats. For this project, we focused on Premier League matches played in 2010-2017. After throwing away data entries plagued with various errors and difficulties, we ended up with a training set consisting of 2104 Premier League matches played in 2010-2017 minus the 2015-2016 season and a test set consisting of 273 matches played in the 2015-2016 season.
+Our novel approach uses as features the in-game stats from the Electronic Arts' celebrated game franchise FIFA, which were \href{http://www.espnfc.us/blog/espn-fc-united-blog/68/post/2959703/fifa-17-player-ratings-system-blends-advanced-stats-and-subjective-scouting}{painstakingly crafted by the experts}. Those numerical stats (1-100) measuring skills falling under broad categories (attacking, skill, movement, power, mentality, defending, and goalkeeping) were obtained from ``https://sofifa.com''. For practical reasons, we averaged over different positions in the team (forward, midfielder, defender, goalkeeper) all the skills falling under those categories. This was then combined with the records of matches (obtained from ``http://www.worldfootball.net'') to yield a dataset consisting of match outcomes and player stats. For this project, we focused on Premier League matches played in 2010-2017. After throwing away data entries plagued with various errors and difficulties, we ended up with a training set consisting of 2104 Premier League matches played in 2010-2017 minus the 2015-2016 season and a test set consisting of 273 matches played in the 2015-2016 season.
 
-This was all done by writing a \href{https://github.com/TheLordBlarg/Soccer_Success/tree/master/codes/data_processing}{vast array of programs} that facilitate all the steps from scraping raw xml off of different websites to processing and combining them to yield consistent datasets that can be used for machine learning.
+This was all done by writing a \href{https://github.com/TheLordBlarg/Soccer_Success/tree/master/codes/data_processing}{vast array of programs} that facilitate all the steps from scraping raw xml off of different websites to processing and combining them to yield consistent datasets that can be used for machine learning. The programs had to be able to match the date and the name of the player from a list of players and dates found from the records of matches and the player database. The date was simple enough to convert to the same format and then take the newest data set up to the date of the match. The name required more finesse. First, an exact match was searched. If that was not found, a match of each name individually, but not in the same order and not requiring the name number of names, was checked. In the rare event that this failed, a manual entry was requested of the user.\\
 ~\\
 \section{Data Analysis Approach}
-
 The first method that we used to analyze the dataset obtained by above procedure was Weka. We used various algorithms that were identified to be promising during our preliminary investigations. Specifically, those included three tree algorithms, three Bayesian algorithms, and two logistic regression algorithms.
 
 Complementing the Weka, we decided to create our own machine learning implementation. Specifically, we wrote a \href{https://github.com/TheLordBlarg/Soccer_Success/blob/master/codes/machine_learning/msc_nn_hpc.py}{Python script} implementing a neural network with one hidden layer and three softmax output units each corresponding to the probability of the input data belonging to each class. The algorithm also uses 10-fold cross-validation with random partitioning of the dataset into training/validation sets, intentionally mirroring the Weka's approach. One thing of note is that we have normalized the data such that each attribute lies in the $[0,1]$ range (i.e. divided by 100). This seemed to improve the result significantly (increasing the classification accuray by 5-10\%), presumably due to the reduction of overflow errors. For Weka performance, it had no significant impact.
@@ -108,10 +106,9 @@ Complementing the Weka, we decided to create our own machine learning implementa
 Finally, we sought to investigate the relative predictive power of each feature. This is not only interesting in its own right (we might be able to determine which skills are most relevant for soccer), it can also be a helpful aid for guiding machine learning implementation, in particular serving as a sanity-check for the approach. In order to measure this quantitatively, we wrote a \href{https://github.com/TheLordBlarg/Soccer_Success/blob/master/codes/feature_analysis/info_entropy.py}{Python script} that calculates, for each attribute, the maximum information gain that can be achieved by making a split along that attribute (cf. decision trees). \\
 ~\\
 \section{Results}
-
 As mentioned above, we used 2104 Premier League matches played in 2010-2017, minus the 2015-2016 season, as our training and cross-validation set. 273 matches played in the 2015-2016 season was set aside as the test set.
 
-Table \ref{table1} shows the results of various Weka algorithms. Sadly, none of the algorithms performed significantly better than the ZeroR baseline, measured in terms of their 10-fold cross-validation accuracy. Logistic regression, which performed the best, only yielded a 3% improvement over the baseline. Furthermore, its test accuracy was significantly lower than the CV-accuracy, indicating that the generalization is poor.
+Table \ref{table1} shows the results of various Weka algorithms. Sadly, none of the algorithms performed significantly better than the ZeroR baseline, measured in terms of their 10-fold cross-validation accuracy. Logistic regression, which performed the best, only yielded a 3\% improvement over the baseline. Furthermore, its test accuracy was significantly lower than the CV-accuracy, indicating that the generalization is poor. Furthermore, ZeroR tests if the home team won and this will be single greatest indicator of the victor. Since ZeroR drops by 7\% from the training set to the test set and many of the models drop by a much smaller margin, it is likely that they are successfully modeling other parts of the match and having some success.
 
 \begin{center}
     \begin{tabular}{|c|c|c|c|}
@@ -140,8 +137,8 @@ Table \ref{table1} shows the results of various Weka algorithms. Sadly, none of 
     \captionof{table}{Training and 10-fold cross-validation accuracies for Premier League matches in 2010-2017. 2015-2016 season data was set aside as the test set to derive the test accuracy. The highest accuracy in each column has been shaded in light red. \label{table1}}
 \end{center}
 
-Our custom single hidden layer neural network implementation was no more successful. Figure \ref{figLC} shows the learning curve of the network with 30 hidden units. It is clear that there is underfitting and the model is incapable of capturing the underlying trend of the data, if there even is any. Same results were obtained for hidden layer size ranging from 10-100 units (see Figure \ref{figCVH}). This suggests that either the neural network architecture considered is insufficient (for instance, more than one hidden layers may be necessary) or, as is more likely in the light of the failures of other algorithms above, the problem lies with the dataset itself.
-
+Our custom single hidden layer neural network implementation was no more successful. Figure \ref{figLC} shows the learning curve of the network with 30 hidden units. It is clear that there is underfitting and the model is incapable of capturing the underlying trend of the data. Same results were obtained for hidden layer size ranging from 10-100 units (see Figure \ref{figCVH}). This suggests that either the neural network architecture considered is insufficient (for instance, more than one hidden layers may be necessary) or the problem lies with the dataset itself.
+\clearpage~\\
 \begin{center}
     \includegraphics[scale=0.5]{learning_curve}
     \captionof{figure}{\label{figLC}}
@@ -149,7 +146,7 @@ Our custom single hidden layer neural network implementation was no more success
     \captionof{figure}{\label{figCVH}}
 \end{center}
 
-Finally, Table \ref{tablefeature} lists select features and the corresponding information gain that can be obtained by making a split over the feature. Full data is available \href{https://github.com/TheLordBlarg/Soccer_Success/blob/master/results/entropy_train.csv}{in the repository}. A cursory glance suggests that skills related to goalkeeping and defending are the most important factors in deciding the outcome of a soccer match. However, this result should be taken with a grain of salt as there are also nonsensical results such as the goalkeeper's attacking or the forward's goalkeeping skills (which should be completely irrelevant to the match) yielding more information than defender's defending skills (which is clearly relevant). This further suggests that our data is seriously flawed.
+Finally, Table \ref{tablefeature} lists select features and the corresponding information gain that can be obtained by making a split over the feature. Full data is available \href{https://github.com/TheLordBlarg/Soccer_Success/blob/master/results/entropy_train.csv}{in the repository}. A cursory glance suggests that skills related to goalkeeping and defending are the most important factors in deciding the outcome of a soccer match. However, this result should be taken with a grain of salt as there are also nonsensical results such as the goalkeeper's attacking or the forward's goalkeeping skills (which should be completely irrelevant to the match) yielding more information than defender's defending skills (which is clearly relevant). Though, this result is expected. It is predicted that Manchester City could've won the Premier League this year by a wide margin if they had David De Gea in goal instead of Claudio Bravio.
 
 \begin{center}
     \begin{tabular}{|c|c|c|}
@@ -187,16 +184,10 @@ Finally, Table \ref{tablefeature} lists select features and the corresponding in
 \end{center}
 ~\\
 \section{Discussion}
-
-In retrospect, we may have been overly optimistic and ambitious in pursuing this project. Of course, soccer is a fundamentally team-based sport and neglecting crucial factors such as formations and previous team records may have doomed the prospect of success from the beginning. Furthermore, quantitative measures of individual attributes, including video game stats used here, must by necessity incorporate some subjective judgments and may even be inconsistent from year to year.
-
-There are of course various alternative ways of formulating features from individual numerical stats that can be tried. However, considering that our current approach has yielded such abysmal results, we do not expect to obtain drastically improved results following this approach. It is likely that our data is fundamentally limited and it is probably better to find a different data source altogether for measuring individual skills.
+While the results were not as good as one would hope, they still are a promising start. There was a performance gain over ZeroR that was noticeable over large datasets. Our data was averaging over players and therefor was still crude in this respect. Furthermore, only simple models were fit to the data. For example, models that predicted probabilities of a team getting a win, draw, or loss would be more appropriate than a model that simply predicted it outright.
 
 Finally, it may be the case that although individual attributes alone do not have enough predictive power, combining them with team-based features can yield drastically improved performance that cannot be achieved by using either set of features alone. This would be the natural direction to explore in any future work. \\
-~\\
-\section{Conclusion}
 
-In conclusion, Soccer Success. \\
 ~\\
 \section{Acknowledgements}
 Jeremy Rath worked mainly on data collection and processing. Hyun Jin Kim worked mainly on data analysis. Both authors worked on setting up the webpage and preparing this report.
