@@ -26,8 +26,7 @@ Our novel approach uses in-game stats from the Electronic Arts' celebrated game 
 
 Unfortunately, we have failed. Soccer is fundamentally a collectivist sport. Socialist Soccer Success!
 
-
-![](figures/test.jpg)
+![](report/figures/test.jpg)
 *A pretty girl*
 
 # Soccer_Predictions
