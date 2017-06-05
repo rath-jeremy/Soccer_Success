@@ -27,19 +27,10 @@ Our novel approach uses in-game stats from the Electronic Arts' celebrated game 
 Unfortunately, we have failed. Soccer is fundamentally a collectivist sport. Socialist Soccer Success!
 
 ![](report/figures/result_weka.png)
-*Results from select algorithms in Weka*
+*Figure 1. Results from select algorithms in Weka*
 
 ![](report/figures/learning_curve.png)
-*Typical learning curve for custom-made single layer neural network*
+*Figure 2. Typical learning curve for custom-made single layer neural network*
 
 ![](report/figures/result_features.png)
-*List of select features ordered by their information gain. Full list available [in the repository](https://github.com/TheLordBlarg/Soccer_Success/blob/master/results/entropy_train.csv)*
-
-# Soccer_Predictions
-This is the current version of the code which will build a player database and use that database convert a match list to an arff format for use in a machine learning program.
-
-database_functions_helper.py is a script that is full of smaller functions that are [almost all] incorporated in and used by database_functions_user.py.
-
-database_function_user.py is a more commented script of functions that are in a more usable format for building a database and then using that database to convert match data to arff data for us in Weka.
-
-database_builder.py applies the database building function to build a database.
+*Figure 3. List of select features ordered by their information gain. Full list available [in the repository](https://github.com/TheLordBlarg/Soccer_Success/blob/master/results/entropy_train.csv)*
