@@ -24,10 +24,12 @@ Our novel approach uses in-game stats from the Electronic Arts' celebrated game 
 
 # Results
 
-Unfortunately, we have failed. Soccer is fundamentally a collectivist sport. Socialist Soccer Success!
+Unfortunately, our results were quite disappointing. Figure 1 shows the results of various Weka algorithms applied to the dataset. None of the algorithms performed significantly better than the ZeroR baseline, measured in terms of their 10-fold cross-validation accuracy. Logistic regression, which performed the best, only yielded a 3% improvement over the baseline. Furthermore, its test accuracy was significantly lower than the CV-accuracy, indicating that the generalization is poor.
 
 ![](report/figures/result_weka.png)
 *Figure 1. Results from select algorithms in Weka*
+
+Results 
 
 ![](report/figures/learning_curve.png)
 *Figure 2. Typical learning curve for custom-made single layer neural network*
