@@ -1,0 +1,65 @@
+# Variable, entropy gain (prior entropy = 1.5305276569) , threshold
+Team 1: Goalkeeper: Attacking,0.0033049522095651707,25.0
+Team 1: Goalkeeper: Skill,0.00584970612385316,14.4
+Team 1: Goalkeeper: Movement,0.01332131548137716,53.0
+Team 1: Goalkeeper: Power,0.004822741579979306,42.8
+Team 1: Goalkeeper: Mentality,0.003987062212624126,34.0
+Team 1: Goalkeeper: Defending,0.003222777525220488,26.3333333333
+Team 1: Goalkeeper: Goalkeeping,0.03567655005100878,79.8
+Team 1: Defender: Attacking,0.008139233580038097,15.6875
+Team 1: Defender: Skill,0.008716587426667921,16.1333333333
+Team 1: Defender: Movement,0.011140301901366279,18.75
+Team 1: Defender: Power,0.004216668877564667,25.0
+Team 1: Defender: Mentality,0.008322532826623874,12.98333333335
+Team 1: Defender: Defending,0.013332217266042834,19.25
+Team 1: Defender: Goalkeeping,0.0052803748793508465,2.86666666667
+Team 1: Midfielder: Attacking,0.005625476591529566,17.0
+Team 1: Midfielder: Skill,0.007196061835371692,16.45
+Team 1: Midfielder: Movement,0.004256678322242413,17.6
+Team 1: Midfielder: Power,0.003395974919025102,26.1333333333
+Team 1: Midfielder: Mentality,0.004007127372490871,16.2083333333
+Team 1: Midfielder: Defending,0.0030379314647406286,26.2222222222
+Team 1: Midfielder: Goalkeeping,0.0024862729953636364,2.12
+Team 1: Forward: Attacking,0.006297120959476654,75.69999999999999
+Team 1: Forward: Skill,0.00379884129964414,32.6
+Team 1: Forward: Movement,0.0031653451530053722,19.208333333349998
+Team 1: Forward: Power,0.002485430338192929,80.6
+Team 1: Forward: Mentality,0.008549350185249605,71.2
+Team 1: Forward: Defending,0.00631229264841382,45.6666666667
+Team 1: Forward: Goalkeeping,0.0021774463387507215,1.333333333335
+Team 1: Number of Goalkeepers,0.0008986180057255488,1.0
+Team 1: Number of Defenders,0.001185734421674578,4.0
+Team 1: Number of Midfielders,0.0006339788502371935,5.0
+Team 1: Number of Strikers,0.0012241003354589441,1.0
+Team 2: Goalkeeper: Attacking,0.0028320126380037003,16.0
+Team 2: Goalkeeper: Skill,0.00372033261697724,17.0
+Team 2: Goalkeeper: Movement,0.00500137288753888,65.0
+Team 2: Goalkeeper: Power,0.004849129975082134,36.8
+Team 2: Goalkeeper: Mentality,0.006283571162336132,29.666666666650002
+Team 2: Goalkeeper: Defending,0.0017544466536671965,63.5
+Team 2: Goalkeeper: Goalkeeping,0.024776643198969328,80.2
+Team 2: Defender: Attacking,0.00525293928201731,13.84
+Team 2: Defender: Skill,0.0021844008020519556,32.3
+Team 2: Defender: Movement,0.004695041244058729,19.15
+Team 2: Defender: Power,0.002213941914725126,12.7
+Team 2: Defender: Mentality,0.0045238588947948966,14.05
+Team 2: Defender: Defending,0.002065490488388111,4.366666666665
+Team 2: Defender: Goalkeeping,0.003702235137626353,3.66666666667
+Team 2: Midfielder: Attacking,0.0038431352605048374,18.4
+Team 2: Midfielder: Skill,0.003223828673064588,17.5
+Team 2: Midfielder: Movement,0.0037071351382891304,19.45
+Team 2: Midfielder: Power,0.002613084249551312,13.25
+Team 2: Midfielder: Mentality,0.0017268504123035822,7.833333333335
+Team 2: Midfielder: Defending,0.0023664668863332405,7.408333333335
+Team 2: Midfielder: Goalkeeping,0.00198008157593077,2.08
+Team 2: Forward: Attacking,0.007079369828391302,70.0
+Team 2: Forward: Skill,0.006826854930579662,61.6
+Team 2: Forward: Movement,0.008498030675616164,80.6
+Team 2: Forward: Power,0.002457058620813246,83.69999999999999
+Team 2: Forward: Mentality,0.0050179525176321516,68.4
+Team 2: Forward: Defending,0.00295111999782538,34.0
+Team 2: Forward: Goalkeeping,0.002115403497276569,10.4
+Team 2: Number of Goalkeepers,0.0008986180057255488,1.0
+Team 2: Number of Defenders,0.001185734421674578,4.0
+Team 2: Number of Midfielders,0.0006339788502371935,5.0
+Team 2: Number of Strikers,0.0012241003354589441,1.0
