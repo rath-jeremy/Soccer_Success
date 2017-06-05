@@ -29,7 +29,7 @@ Unfortunately, we have failed. Soccer is fundamentally a collectivist sport. Soc
 ![](report/figures/result_weka.png)
 *Results from select algorithms in Weka*
 
-![](report/figures/figLC.png)
+![](report/figures/learning_curve.png)
 *Typical learning curve for custom-made single layer neural network*
 
 ![](report/figures/result_features.png)
